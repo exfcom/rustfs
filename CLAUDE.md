@@ -1,275 +1,352 @@
-# CLAUDE.md
+# Claude Code Configuration - SPARC Development Environment
 
-This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
+## 🚨 CRITICAL: CONCURRENT EXECUTION & FILE MANAGEMENT
+
+**ABSOLUTE RULES**:
+1. ALL operations MUST be concurrent/parallel in a single message
+2. **NEVER save working files, text/mds and tests to the root folder**
+3. ALWAYS organize files in appropriate subdirectories
+4. **USE CLAUDE CODE'S TASK TOOL** for spawning agents concurrently, not just MCP
+
+### ⚡ GOLDEN RULE: "1 MESSAGE = ALL RELATED OPERATIONS"
+
+**MANDATORY PATTERNS:**
+- **TodoWrite**: ALWAYS batch ALL todos in ONE call (5-10+ todos minimum)
+- **Task tool (Claude Code)**: ALWAYS spawn ALL agents in ONE message with full instructions
+- **File operations**: ALWAYS batch ALL reads/writes/edits in ONE message
+- **Bash commands**: ALWAYS batch ALL terminal operations in ONE message
+- **Memory operations**: ALWAYS batch ALL memory store/retrieve in ONE message
+
+### 🎯 CRITICAL: Claude Code Task Tool for Agent Execution
+
+**Claude Code's Task tool is the PRIMARY way to spawn agents:**
+```javascript
+// ✅ CORRECT: Use Claude Code's Task tool for parallel agent execution
+[Single Message]:
+  Task("Research agent", "Analyze requirements and patterns...", "researcher")
+  Task("Coder agent", "Implement core features...", "coder")
+  Task("Tester agent", "Create comprehensive tests...", "tester")
+  Task("Reviewer agent", "Review code quality...", "reviewer")
+  Task("Architect agent", "Design system architecture...", "system-architect")
+```
+
+**MCP tools are ONLY for coordination setup:**
+- `mcp__claude-flow__swarm_init` - Initialize coordination topology
+- `mcp__claude-flow__agent_spawn` - Define agent types for coordination
+- `mcp__claude-flow__task_orchestrate` - Orchestrate high-level workflows
+
+### 📁 File Organization Rules
+
+**NEVER save to root folder. Use these directories:**
+- `/src` - Source code files
+- `/tests` - Test files
+- `/docs` - Documentation and markdown files
+- `/config` - Configuration files
+- `/scripts` - Utility scripts
+- `/examples` - Example code
 
 ## Project Overview
 
-RustFS is a high-performance distributed object storage software built with Rust, providing S3-compatible APIs and
-advanced features like data lakes, AI, and big data support. It's designed as an alternative to MinIO with better
-performance and a more business-friendly Apache 2.0 license.
+This project uses SPARC (Specification, Pseudocode, Architecture, Refinement, Completion) methodology with Claude-Flow orchestration for systematic Test-Driven Development.
 
-## Build Commands
+## SPARC Commands
 
-### Primary Build Commands
+### Core Commands
+- `npx claude-flow sparc modes` - List available modes
+- `npx claude-flow sparc run <mode> "<task>"` - Execute specific mode
+- `npx claude-flow sparc tdd "<feature>"` - Run complete TDD workflow
+- `npx claude-flow sparc info <mode>` - Get mode details
 
-- `cargo build --release` - Build the main RustFS binary
-- `./build-rustfs.sh` - Recommended build script that handles console resources and cross-platform compilation
-- `./build-rustfs.sh --dev` - Development build with debug symbols
-- `make build` or `just build` - Use Make/Just for standardized builds
+### Batchtools Commands
+- `npx claude-flow sparc batch <modes> "<task>"` - Parallel execution
+- `npx claude-flow sparc pipeline "<task>"` - Full pipeline processing
+- `npx claude-flow sparc concurrent <mode> "<tasks-file>"` - Multi-task processing
 
-### Platform-Specific Builds
+### Build Commands
+- `npm run build` - Build project
+- `npm run test` - Run tests
+- `npm run lint` - Linting
+- `npm run typecheck` - Type checking
 
-- `./build-rustfs.sh --platform x86_64-unknown-linux-musl` - Build for musl target
-- `./build-rustfs.sh --platform aarch64-unknown-linux-gnu` - Build for ARM64
-- `make build-musl` or `just build-musl` - Build musl variant
-- `make build-cross-all` - Build all supported architectures
+## SPARC Workflow Phases
 
-### Testing Commands
+1. **Specification** - Requirements analysis (`sparc run spec-pseudocode`)
+2. **Pseudocode** - Algorithm design (`sparc run spec-pseudocode`)
+3. **Architecture** - System design (`sparc run architect`)
+4. **Refinement** - TDD implementation (`sparc tdd`)
+5. **Completion** - Integration (`sparc run integration`)
 
-- `cargo test --workspace --exclude e2e_test` - Run unit tests (excluding e2e tests)
-- `cargo nextest run --all --exclude e2e_test` - Use nextest if available (faster)
-- `cargo test --all --doc` - Run documentation tests
-- `make test` or `just test` - Run full test suite
-- `make pre-commit` - Run all quality checks (fmt, clippy, check, test)
+## Code Style & Best Practices
 
-### End-to-End Testing
+- **Modular Design**: Files under 500 lines
+- **Environment Safety**: Never hardcode secrets
+- **Test-First**: Write tests before implementation
+- **Clean Architecture**: Separate concerns
+- **Documentation**: Keep updated
 
-- `cargo test --package e2e_test` - Run all e2e tests
-- `./scripts/run_e2e_tests.sh` - Run e2e tests via script
-- `./scripts/run_scanner_benchmarks.sh` - Run scanner performance benchmarks
+## 🚀 Available Agents (54 Total)
 
-### KMS-Specific Testing (with proxy bypass)
+### Core Development
+`coder`, `reviewer`, `tester`, `planner`, `researcher`
 
--
-`NO_PROXY=127.0.0.1,localhost HTTP_PROXY= HTTPS_PROXY= http_proxy= https_proxy= cargo test --package e2e_test test_local_kms_end_to_end -- --nocapture --test-threads=1` -
-Run complete KMS end-to-end test
--
-`NO_PROXY=127.0.0.1,localhost HTTP_PROXY= HTTPS_PROXY= http_proxy= https_proxy= cargo test --package e2e_test kms:: -- --nocapture --test-threads=1` -
-Run all KMS tests
-- `cargo test --package e2e_test test_local_kms_key_isolation -- --nocapture --test-threads=1` - Test KMS key isolation
-- `cargo test --package e2e_test test_local_kms_large_file -- --nocapture --test-threads=1` - Test KMS with large files
+### Swarm Coordination
+`hierarchical-coordinator`, `mesh-coordinator`, `adaptive-coordinator`, `collective-intelligence-coordinator`, `swarm-memory-manager`
 
-### Code Quality
+### Consensus & Distributed
+`byzantine-coordinator`, `raft-manager`, `gossip-coordinator`, `consensus-builder`, `crdt-synchronizer`, `quorum-manager`, `security-manager`
 
-- `cargo fmt --all` - Format code
-- `cargo clippy --all-targets --all-features -- -D warnings` - Lint code
-- `make pre-commit` or `just pre-commit` - Run all quality checks (fmt, clippy, check, test)
+### Performance & Optimization
+`perf-analyzer`, `performance-benchmarker`, `task-orchestrator`, `memory-coordinator`, `smart-agent`
 
-### Quick Development Commands
+### GitHub & Repository
+`github-modes`, `pr-manager`, `code-review-swarm`, `issue-tracker`, `release-manager`, `workflow-automation`, `project-board-sync`, `repo-architect`, `multi-repo-swarm`
 
-- `make help` or `just help` - Show all available commands with descriptions
-- `make help-build` - Show detailed build options and cross-compilation help
-- `make help-docker` - Show comprehensive Docker build and deployment options
-- `./scripts/dev_deploy.sh <IP>` - Deploy development build to remote server
-- `./scripts/run.sh` - Start local development server
-- `./scripts/probe.sh` - Health check and connectivity testing
+### SPARC Methodology
+`sparc-coord`, `sparc-coder`, `specification`, `pseudocode`, `architecture`, `refinement`
 
-### Docker Build Commands
+### Specialized Development
+`backend-dev`, `mobile-dev`, `ml-developer`, `cicd-engineer`, `api-docs`, `system-architect`, `code-analyzer`, `base-template-generator`
 
-- `make docker-buildx` - Build multi-architecture production images
-- `make docker-dev-local` - Build development image for local use
-- `./docker-buildx.sh --push` - Build and push production images
+### Testing & Validation
+`tdd-london-swarm`, `production-validator`
 
-## Architecture Overview
+### Migration & Planning
+`migration-planner`, `swarm-init`
 
-### Core Components
+## 🎯 Claude Code vs MCP Tools
 
-**Main Binary (`rustfs/`):**
+### Claude Code Handles ALL EXECUTION:
+- **Task tool**: Spawn and run agents concurrently for actual work
+- File operations (Read, Write, Edit, MultiEdit, Glob, Grep)
+- Code generation and programming
+- Bash commands and system operations
+- Implementation work
+- Project navigation and analysis
+- TodoWrite and task management
+- Git operations
+- Package management
+- Testing and debugging
 
-- Entry point at `rustfs/src/main.rs`
-- Core modules: admin, auth, config, server, storage, license management, profiling
-- HTTP server with S3-compatible APIs
-- Service state management and graceful shutdown
-- Parallel service initialization with DNS resolver, bucket metadata, and IAM
+### MCP Tools ONLY COORDINATE:
+- Swarm initialization (topology setup)
+- Agent type definitions (coordination patterns)
+- Task orchestration (high-level planning)
+- Memory management
+- Neural features
+- Performance tracking
+- GitHub integration
 
-**Key Crates (`crates/`):**
+**KEY**: MCP coordinates the strategy, Claude Code's Task tool executes with real agents.
 
-- `ecstore` - Erasure coding storage implementation (core storage layer)
-- `iam` - Identity and Access Management
-- `kms` - Key Management Service for encryption and key handling
-- `madmin` - Management dashboard and admin API interface
-- `s3select-api` & `s3select-query` - S3 Select API and query engine
-- `config` - Configuration management with notify features
-- `crypto` - Cryptography and security features
-- `lock` - Distributed locking implementation
-- `filemeta` - File metadata management
-- `rio` - Rust I/O utilities and abstractions
-- `common` - Shared utilities and data structures
-- `protos` - Protocol buffer definitions
-- `audit-logger` - Audit logging for file operations
-- `notify` - Event notification system
-- `obs` - Observability utilities
-- `workers` - Worker thread pools and task scheduling
-- `appauth` - Application authentication and authorization
-- `ahm` - Asynchronous Hash Map for concurrent data structures
-- `mcp` - MCP server for S3 operations
-- `signer` - Client request signing utilities
-- `checksums` - Client checksum calculation utilities
-- `utils` - General utility functions and helpers
-- `zip` - ZIP file handling and compression
-- `targets` - Target-specific configurations and utilities
+## 🚀 Quick Setup
 
-### Build System
+```bash
+# Add MCP servers (Claude Flow required, others optional)
+claude mcp add claude-flow npx claude-flow@alpha mcp start
+claude mcp add ruv-swarm npx ruv-swarm mcp start  # Optional: Enhanced coordination
+claude mcp add flow-nexus npx flow-nexus@latest mcp start  # Optional: Cloud features
+```
 
-- Cargo workspace with 25+ crates (including new KMS functionality)
-- Custom `build-rustfs.sh` script for advanced build options
-- Multi-architecture Docker builds via `docker-buildx.sh`
-- Both Make and Just task runners supported with comprehensive help
-- Cross-compilation support for multiple Linux targets
-- Automated CI/CD with GitHub Actions for testing, building, and Docker publishing
-- Performance benchmarking and audit workflows
+## MCP Tool Categories
 
-### Key Dependencies
+### Coordination
+`swarm_init`, `agent_spawn`, `task_orchestrate`
 
-- `axum` - HTTP framework for S3 API server
-- `tokio` - Async runtime
-- `s3s` - S3 protocol implementation library
-- `datafusion` - For S3 Select query processing
-- `hyper`/`hyper-util` - HTTP client/server utilities
-- `rustls` - TLS implementation
-- `serde`/`serde_json` - Serialization
-- `tracing` - Structured logging and observability
-- `pprof` - Performance profiling with flamegraph support
-- `tikv-jemallocator` - Memory allocator for Linux GNU builds
+### Monitoring
+`swarm_status`, `agent_list`, `agent_metrics`, `task_status`, `task_results`
 
-### Development Workflow
+### Memory & Neural
+`memory_usage`, `neural_status`, `neural_train`, `neural_patterns`
 
-- Console resources are embedded during build via `rust-embed`
-- Protocol buffers generated via custom `gproto` binary
-- E2E tests in separate crate (`e2e_test`) with comprehensive KMS testing
-- Shadow build for version/metadata embedding
-- Support for both GNU and musl libc targets
-- Development scripts in `scripts/` directory for common tasks
-- Git hooks setup available via `make setup-hooks` or `just setup-hooks`
+### GitHub Integration
+`github_swarm`, `repo_analyze`, `pr_enhance`, `issue_triage`, `code_review`
 
-### Performance & Observability
+### System
+`benchmark_run`, `features_detect`, `swarm_monitor`
 
-- Performance profiling available with `pprof` integration (disabled on Windows)
-- Profiling enabled via environment variables in production
-- Built-in observability with OpenTelemetry integration
-- Background services (scanner, heal) can be controlled via environment variables:
-    - `RUSTFS_ENABLE_SCANNER` (default: true)
-    - `RUSTFS_ENABLE_HEAL` (default: true)
+### Flow-Nexus MCP Tools (Optional Advanced Features)
+Flow-Nexus extends MCP capabilities with 70+ cloud-based orchestration tools:
 
-### Service Architecture
+**Key MCP Tool Categories:**
+- **Swarm & Agents**: `swarm_init`, `swarm_scale`, `agent_spawn`, `task_orchestrate`
+- **Sandboxes**: `sandbox_create`, `sandbox_execute`, `sandbox_upload` (cloud execution)
+- **Templates**: `template_list`, `template_deploy` (pre-built project templates)
+- **Neural AI**: `neural_train`, `neural_patterns`, `seraphina_chat` (AI assistant)
+- **GitHub**: `github_repo_analyze`, `github_pr_manage` (repository management)
+- **Real-time**: `execution_stream_subscribe`, `realtime_subscribe` (live monitoring)
+- **Storage**: `storage_upload`, `storage_list` (cloud file management)
 
-- Service state management with graceful shutdown handling
-- Parallel initialization of core systems (DNS, bucket metadata, IAM)
-- Event notification system with MQTT and webhook support
-- Auto-heal and data scanner for storage integrity
-- Jemalloc allocator for Linux GNU targets for better performance
+**Authentication Required:**
+- Register: `mcp__flow-nexus__user_register` or `npx flow-nexus@latest register`
+- Login: `mcp__flow-nexus__user_login` or `npx flow-nexus@latest login`
+- Access 70+ specialized MCP tools for advanced orchestration
 
-## Environment Variables
+## 🚀 Agent Execution Flow with Claude Code
 
-- `RUSTFS_ENABLE_SCANNER` - Enable/disable background data scanner (default: true)
-- `RUSTFS_ENABLE_HEAL` - Enable/disable auto-heal functionality (default: true)
-- Various profiling and observability controls
-- Build-time variables for Docker builds (RELEASE, REGISTRY, etc.)
-- Test environment configurations in `scripts/dev_rustfs.env`
+### The Correct Pattern:
 
-### KMS Environment Variables
+1. **Optional**: Use MCP tools to set up coordination topology
+2. **REQUIRED**: Use Claude Code's Task tool to spawn agents that do actual work
+3. **REQUIRED**: Each agent runs hooks for coordination
+4. **REQUIRED**: Batch all operations in single messages
 
-- `NO_PROXY=127.0.0.1,localhost` - Required for KMS E2E tests to bypass proxy
-- `HTTP_PROXY=` `HTTPS_PROXY=` `http_proxy=` `https_proxy=` - Clear proxy settings for local KMS testing
+### Example Full-Stack Development:
 
-## KMS (Key Management Service) Architecture
+```javascript
+// Single message with all agent spawning via Claude Code's Task tool
+[Parallel Agent Execution]:
+  Task("Backend Developer", "Build REST API with Express. Use hooks for coordination.", "backend-dev")
+  Task("Frontend Developer", "Create React UI. Coordinate with backend via memory.", "coder")
+  Task("Database Architect", "Design PostgreSQL schema. Store schema in memory.", "code-analyzer")
+  Task("Test Engineer", "Write Jest tests. Check memory for API contracts.", "tester")
+  Task("DevOps Engineer", "Setup Docker and CI/CD. Document in memory.", "cicd-engineer")
+  Task("Security Auditor", "Review authentication. Report findings via hooks.", "reviewer")
+  
+  // All todos batched together
+  TodoWrite { todos: [...8-10 todos...] }
+  
+  // All file operations together
+  Write "backend/server.js"
+  Write "frontend/App.jsx"
+  Write "database/schema.sql"
+```
 
-### KMS Implementation Status
+## 📋 Agent Coordination Protocol
 
-- **Full KMS Integration:** Complete implementation with Local and Vault backends
-- **Automatic Configuration:** KMS auto-configures on startup with `--kms-enable` flag
-- **Encryption Support:** Full S3-compatible server-side encryption (SSE-S3, SSE-KMS, SSE-C)
-- **Admin API:** Complete KMS management via HTTP admin endpoints
-- **Production Ready:** Comprehensive testing including large files and key isolation
+### Every Agent Spawned via Task Tool MUST:
 
-### KMS Configuration
+**1️⃣ BEFORE Work:**
+```bash
+npx claude-flow@alpha hooks pre-task --description "[task]"
+npx claude-flow@alpha hooks session-restore --session-id "swarm-[id]"
+```
 
-- **Local Backend:** `--kms-backend local --kms-key-dir <path> --kms-default-key-id <id>`
-- **Vault Backend:** `--kms-backend vault --kms-vault-endpoint <url> --kms-vault-key-name <name>`
-- **Auto-startup:** KMS automatically initializes when `--kms-enable` is provided
-- **Manual Configuration:** Also supports dynamic configuration via admin API
+**2️⃣ DURING Work:**
+```bash
+npx claude-flow@alpha hooks post-edit --file "[file]" --memory-key "swarm/[agent]/[step]"
+npx claude-flow@alpha hooks notify --message "[what was done]"
+```
 
-### S3 Encryption Support
+**3️⃣ AFTER Work:**
+```bash
+npx claude-flow@alpha hooks post-task --task-id "[task]"
+npx claude-flow@alpha hooks session-end --export-metrics true
+```
 
-- **SSE-S3:** Server-side encryption with S3-managed keys (`ServerSideEncryption: AES256`)
-- **SSE-KMS:** Server-side encryption with KMS-managed keys (`ServerSideEncryption: aws:kms`)
-- **SSE-C:** Server-side encryption with customer-provided keys
-- **Response Headers:** All encryption types return correct `server_side_encryption` headers in PUT/GET responses
+## 🎯 Concurrent Execution Examples
 
-### KMS Testing Architecture
+### ✅ CORRECT WORKFLOW: MCP Coordinates, Claude Code Executes
 
-- **Comprehensive E2E Tests:** Located in `crates/e2e_test/src/kms/`
-- **Test Environments:** Automated test environment setup with temporary directories
-- **Encryption Coverage:** Tests all three encryption types (SSE-S3, SSE-KMS, SSE-C)
-- **API Coverage:** Tests all KMS admin APIs (CreateKey, DescribeKey, ListKeys, etc.)
-- **Edge Cases:** Key isolation, large file handling, error scenarios
+```javascript
+// Step 1: MCP tools set up coordination (optional, for complex tasks)
+[Single Message - Coordination Setup]:
+  mcp__claude-flow__swarm_init { topology: "mesh", maxAgents: 6 }
+  mcp__claude-flow__agent_spawn { type: "researcher" }
+  mcp__claude-flow__agent_spawn { type: "coder" }
+  mcp__claude-flow__agent_spawn { type: "tester" }
 
-### Key Files for KMS
+// Step 2: Claude Code Task tool spawns ACTUAL agents that do the work
+[Single Message - Parallel Agent Execution]:
+  // Claude Code's Task tool spawns real agents concurrently
+  Task("Research agent", "Analyze API requirements and best practices. Check memory for prior decisions.", "researcher")
+  Task("Coder agent", "Implement REST endpoints with authentication. Coordinate via hooks.", "coder")
+  Task("Database agent", "Design and implement database schema. Store decisions in memory.", "code-analyzer")
+  Task("Tester agent", "Create comprehensive test suite with 90% coverage.", "tester")
+  Task("Reviewer agent", "Review code quality and security. Document findings.", "reviewer")
+  
+  // Batch ALL todos in ONE call
+  TodoWrite { todos: [
+    {id: "1", content: "Research API patterns", status: "in_progress", priority: "high"},
+    {id: "2", content: "Design database schema", status: "in_progress", priority: "high"},
+    {id: "3", content: "Implement authentication", status: "pending", priority: "high"},
+    {id: "4", content: "Build REST endpoints", status: "pending", priority: "high"},
+    {id: "5", content: "Write unit tests", status: "pending", priority: "medium"},
+    {id: "6", content: "Integration tests", status: "pending", priority: "medium"},
+    {id: "7", content: "API documentation", status: "pending", priority: "low"},
+    {id: "8", content: "Performance optimization", status: "pending", priority: "low"}
+  ]}
+  
+  // Parallel file operations
+  Bash "mkdir -p app/{src,tests,docs,config}"
+  Write "app/package.json"
+  Write "app/src/server.js"
+  Write "app/tests/server.test.js"
+  Write "app/docs/API.md"
+```
 
-- `crates/kms/` - Core KMS implementation with Local/Vault backends
-- `rustfs/src/main.rs` - KMS auto-initialization in `init_kms_system()`
-- `rustfs/src/storage/ecfs.rs` - SSE encryption/decryption in PUT/GET operations
-- `rustfs/src/admin/handlers/kms*.rs` - KMS admin endpoints
-- `crates/e2e_test/src/kms/` - Comprehensive KMS test suite
-- `crates/rio/src/encrypt_reader.rs` - Streaming encryption for large files
+### ❌ WRONG (Multiple Messages):
+```javascript
+Message 1: mcp__claude-flow__swarm_init
+Message 2: Task("agent 1")
+Message 3: TodoWrite { todos: [single todo] }
+Message 4: Write "file.js"
+// This breaks parallel coordination!
+```
 
-## Code Style and Safety Requirements
+## Performance Benefits
 
-- **Language Requirements:**
-    - Communicate with me in Chinese, but **only English can be used in code files**
-    - Code comments, function names, variable names, and all text in source files must be in English only
-    - No Chinese characters, emojis, or non-ASCII characters are allowed in any source code files
-    - This includes comments, strings, documentation, and any other text within code files
-- **Safety-Critical Rules:**
-    - `unsafe_code = "deny"` enforced at workspace level
-    - Never use `unwrap()`, `expect()`, or panic-inducing code except in tests
-    - Avoid blocking I/O operations in async contexts
-    - Use proper error handling with `Result<T, E>` and `Option<T>`
-    - Follow Rust's ownership and borrowing rules strictly
-- **Performance Guidelines:**
-    - Use `cargo clippy --all-targets --all-features -- -D warnings` to catch issues
-    - Prefer `anyhow` for error handling in applications, `thiserror` for libraries
-    - Use appropriate async runtimes and avoid blocking calls
-- **Testing Standards:**
-    - All new features must include comprehensive tests
-    - Use `#[cfg(test)]` for test-only code that may use panic macros
-    - E2E tests should cover KMS integration scenarios
+- **84.8% SWE-Bench solve rate**
+- **32.3% token reduction**
+- **2.8-4.4x speed improvement**
+- **27+ neural models**
 
-## Common Development Tasks
+## Hooks Integration
 
-### Running KMS Tests Locally
+### Pre-Operation
+- Auto-assign agents by file type
+- Validate commands for safety
+- Prepare resources automatically
+- Optimize topology by complexity
+- Cache searches
 
-1. **Clear proxy settings:** KMS tests require direct localhost connections
-2. **Use serial execution:** `--test-threads=1` prevents port conflicts
-3. **Enable output:** `--nocapture` shows detailed test logs
-4. **Full command:**
-   `NO_PROXY=127.0.0.1,localhost HTTP_PROXY= HTTPS_PROXY= http_proxy= https_proxy= cargo test --package e2e_test test_local_kms_end_to_end -- --nocapture --test-threads=1`
+### Post-Operation
+- Auto-format code
+- Train neural patterns
+- Update memory
+- Analyze performance
+- Track token usage
 
-### KMS Development Workflow
+### Session Management
+- Generate summaries
+- Persist state
+- Track metrics
+- Restore context
+- Export workflows
 
-1. **Code changes:** Modify KMS-related code in `crates/kms/` or `rustfs/src/`
-2. **Compile:** Always run `cargo build` after changes
-3. **Test specific functionality:** Use targeted test commands for faster iteration
-4. **Full validation:** Run complete end-to-end tests before commits
+## Advanced Features (v2.0.0)
 
-### Debugging KMS Issues
+- 🚀 Automatic Topology Selection
+- ⚡ Parallel Execution (2.8-4.4x speed)
+- 🧠 Neural Training
+- 📊 Bottleneck Analysis
+- 🤖 Smart Auto-Spawning
+- 🛡️ Self-Healing Workflows
+- 💾 Cross-Session Memory
+- 🔗 GitHub Integration
 
-- **Server startup:** Check that KMS auto-initializes with debug logs
-- **Encryption failures:** Verify SSE headers are correctly set in both PUT and GET responses
-- **Test failures:** Use `--nocapture` to see detailed error messages
-- **Key management:** Test admin API endpoints with proper authentication
+## Integration Tips
 
-## Important Reminders
+1. Start with basic swarm init
+2. Scale agents gradually
+3. Use memory for context
+4. Monitor progress regularly
+5. Train patterns from success
+6. Enable hooks automation
+7. Use GitHub tools first
 
-- **Always compile after code changes:** Use `cargo build` to catch errors early
-- **Don't bypass tests:** All functionality must be properly tested, not worked around
-- **Use proper error handling:** Never use `unwrap()` or `expect()` in production code (except tests)
-- **Follow S3 compatibility:** Ensure all encryption types return correct HTTP response headers
+## Support
+
+- Documentation: https://github.com/ruvnet/claude-flow
+- Issues: https://github.com/ruvnet/claude-flow/issues
+- Flow-Nexus Platform: https://flow-nexus.ruv.io (registration required for cloud features)
+
+---
+
+Remember: **Claude Flow coordinates, Claude Code creates!**
 
 # important-instruction-reminders
-
 Do what has been asked; nothing more, nothing less.
 NEVER create files unless they're absolutely necessary for achieving your goal.
 ALWAYS prefer editing an existing file to creating a new one.
-NEVER proactively create documentation files (*.md) or README files. Only create documentation files if explicitly
-requested by the User.
+NEVER proactively create documentation files (*.md) or README files. Only create documentation files if explicitly requested by the User.
+Never save working files, text/mds and tests to the root folder.
