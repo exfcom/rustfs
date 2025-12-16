@@ -29,7 +29,7 @@ This directory contains comprehensive architecture documentation for the RustFS 
 ### Design Decisions
 - [Architecture Decision Records](09-adr/README.md) - ADRs documenting key architectural choices
 - [Design Patterns](10-design-patterns.md) - Common patterns used throughout the codebase
-- [Technology Stack](11-tech-stack.md) - Technology choices and rationale
+- [Data Structures & Algorithms](11-data-structures-algorithms.md) - Comprehensive implementation analysis
 
 ## Architecture at a Glance
 
